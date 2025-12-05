@@ -62,7 +62,6 @@ def inject_logged_in():
 def home():
     return render_template('home.html')
     
-    
 
 #redirect to GitHub's OAuth page and confirm callback URL
 @app.route('/login')
@@ -94,11 +93,11 @@ def authorized():
 
 @app.route('/page1')
 def renderPage1():
-    if 'user_data' in session:
-        user_data_pprint = pprint.pformat(session['user_data'])#format the user data nicely
-    else:
-        user_data_pprint = '';
-    return render_template('page1.html',dump_user_data=user_data_pprint)
+    #if 'user_data' in session:
+        #user_data_pprint = pprint.pformat(session['user_data'])#format the user data nicely
+    #else:
+        #user_data_pprint = '';
+    return render_template('page1.html')
 
 @app.route('/page2')
 def renderPage2():
