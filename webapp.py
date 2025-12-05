@@ -58,7 +58,7 @@ def inject_logged_in():
     is_logged_in = 'github_token' in session #this will be true if the token is in the session and false otherwise
     return {"logged_in":is_logged_in}
 
-@app.route('/')
+@app.route('/', methods=['GET','POST'])
 def home():
     return render_template('home.html')
     
