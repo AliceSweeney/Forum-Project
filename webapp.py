@@ -60,7 +60,21 @@ def inject_logged_in():
 
 @app.route('/', methods=['GET','POST'])
 def home():
-    return render_template('home.html')
+    connection_string = os.environ["MONGO_CONNECTION_STRING"]
+    db_name = os.environ["MONGO_DBNAME"]
+        
+    client = pymongo.MongoClient(connection_string)
+    db = client[db_name]
+    collection = db['Forum']
+    try:
+        client.admin.command('ping')
+        print("Pinged your deployment. You successfully connected to MongoDB!")
+    except Exception as e:
+        print(e)
+    homePosts = []
+    for x in collection.find():
+        homePosts.append(x)
+    return render_template('home.html', posts=homePosts)
     
 
 #redirect to GitHub's OAuth page and confirm callback URL

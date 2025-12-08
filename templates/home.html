@@ -5,7 +5,7 @@
 {% block content %}
 	<h1>Home</h1>
 
-	<p>The helpful site for ornithophiles everywhere to shar their bird experiences!</p>
+	<p>The helpful site for ornithophiles everywhere to share their bird experiences!</p>
 	{% if logged_in %}
 		<form action=/ method="POST">
 			<p>Chirp away!</p>
@@ -14,6 +14,7 @@
 			<input type="submit" value="Submit">
 		</form>
 	{% endif %}
-
+	
+	{{ posts }}
 
 {% endblock %}
