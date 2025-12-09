@@ -15,6 +15,9 @@
 		</form>
 	{% endif %}
 	
-	{{ posts }}
+	{% for x in posts %}
+		{{ x }}
+		<br>
+	{% endfor %}
 
 {% endblock %}

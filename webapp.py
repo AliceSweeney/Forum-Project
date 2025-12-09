@@ -3,6 +3,7 @@ from flask_oauthlib.client import OAuth
 #from flask_oauthlib.contrib.apps import github #import to make requests to GitHub's OAuth
 from flask import render_template
 
+
 import pprint
 import os
 import pymongo
@@ -74,7 +75,18 @@ def home():
     homePosts = []
     for x in collection.find():
         homePosts.append(x)
-    return render_template('home.html', posts=homePosts)
+    refinedHomePosts = []
+    post = ""
+    user = ""
+    postuser = ""
+    for x in homePosts:
+        post = x['text']
+        user = x['username']
+        postuser = post+' '+ user
+        refinedHomePosts.append(postuser)
+    refinedHomePosts.reverse()
+    print(refinedHomePosts)
+    return render_template('home.html', posts=refinedHomePosts)
     
 
 #redirect to GitHub's OAuth page and confirm callback URL
@@ -105,17 +117,6 @@ def authorized():
     return render_template('message.html', message=message)
 
 
-@app.route('/page1')
-def renderPage1():
-    #if 'user_data' in session:
-        #user_data_pprint = pprint.pformat(session['user_data'])#format the user data nicely
-    #else:
-        #user_data_pprint = '';
-    return render_template('page1.html')
-
-@app.route('/page2')
-def renderPage2():
-    return render_template('page2.html')
 
 #the tokengetter is automatically called to check who is logged in.
 @github.tokengetter
