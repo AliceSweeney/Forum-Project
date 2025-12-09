@@ -36,7 +36,7 @@ github = oauth.remote_app(
 )
 
 #set up mongoDB
-def main():
+""" def main():
     connection_string = os.environ["MONGO_CONNECTION_STRING"]
     db_name = os.environ["MONGO_DBNAME"]
         
@@ -48,6 +48,22 @@ def main():
         print("Pinged your deployment. You successfully connected to MongoDB!")
     except Exception as e:
         print(e)
+    
+    text = ""
+    username = ""
+    field_value = request.form.get('homeForm')    
+    if not field_value:
+        print("No POST")
+    else:
+        text = request.form["homeForm"]
+        print(text)
+        username = session["user_data"]["name"]
+        print(username)
+    homePosts = []
+    for x in collection.find():
+        homePosts.append(x)
+    return render_template('home.html', posts=homePosts)"""
+
 
 
 #context processors run before templates are rendered and add variable(s) to the template's context
@@ -71,6 +87,16 @@ def home():
         print("Pinged your deployment. You successfully connected to MongoDB!")
     except Exception as e:
         print(e)
+    text = ""
+    username = ""
+    field_value = request.form.get('homeForm')    
+    if not field_value:
+        print("No POST")
+    else:
+        text = request.form["homeForm"]
+        print(text)
+        username = session["user_data"]["login"]
+        print(username)
     homePosts = []
     for x in collection.find():
         homePosts.append(x)
@@ -124,5 +150,4 @@ def get_github_oauth_token():
 
 
 if __name__ == '__main__':
-    main()
     app.run()
