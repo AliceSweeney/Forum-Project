@@ -5,3 +5,11 @@ body {
 #content {
      margin-left: 20px;
 }
+
+
+.post {
+	background-color: #ccd2db;
+	outline-style: ridge;
+	text-align: left;
+	
+}

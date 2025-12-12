@@ -16,7 +16,27 @@
 	{% endif %}
 	
 	{% for x in posts %}
-		{{ x }}
+		<div class="post">
+			{{ x["text"] }}
+			<br>
+			{{ x["username"] }}
+			<br>
+			{% for r in x["replies"] %}
+				{{ r["text"] }}
+				<br>
+				{{ r["username"] }}
+				<br>
+			{% endfor %}
+		</div>
+		{% if logged_in %}
+			<form action=/ method="POST">
+				<p>Reply to this post?</p>
+				<input type="text" name="replyForm">
+				<input type="hidden" name="replyToID" value={{ x["_id"] }} readonly>
+				<br>
+				<input type="submit" value="Submit">
+			</form>
+		{% endif %}
 		<br>
 	{% endfor %}
 

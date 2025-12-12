@@ -2,6 +2,8 @@ from flask import Flask, redirect, url_for, session, request, jsonify
 from flask_oauthlib.client import OAuth
 #from flask_oauthlib.contrib.apps import github #import to make requests to GitHub's OAuth
 from flask import render_template
+from bson.objectid import ObjectId
+
 
 
 import pprint
@@ -59,6 +61,36 @@ def home():
         print("Pinged your deployment. You successfully connected to MongoDB!")
     except Exception as e:
         print(e)
+    
+    #code to get any user reply to a post
+    reply = None
+    replyUsername = None
+    reply_field_value = request.form.get('replyForm')
+    if not reply_field_value:
+        print("no reply")
+    else:
+        reply = request.form["replyForm"]
+        replyUsername = session["user_data"]["login"]
+    if reply is not None:
+        if 'github_token' in session:
+            replyDoc = {"text": reply, "username": replyUsername, "typeOfPost": "reply", "replyTo": ObjectId(request.form.get("replyToID"))}
+            collection.insert_one(replyDoc)
+    #replies = []
+    #for x in collection.find({"typeOfPost": "reply"}):
+    #    replies.append(x)
+    #refinedReplies = []
+    #replyPost = ""
+    #replyUser = ""
+    #replyPostUser = ""
+    #for x in replies:
+    #    replyPost = x['text']
+    #    replyUser = x['username']
+    #    replyPostUser = replyPost+' -'+ replyUser
+    #    refinedReplies.append(replyPostUser)
+    #refinedReplies.reverse()
+    #print(refinedReplies)
+    
+    #code to get the users post
     text = None
     username = None
     field_value = request.form.get('homeForm')    
@@ -66,27 +98,35 @@ def home():
         print("No POST")
     else:
         text = request.form["homeForm"]
-        print(text)
+        #print(text)
         username = session["user_data"]["login"]
-        print(username)
+        #print(username)
     if text is not None:
-        doc = {"text": text, "username": username}
-        collection.insert_one(doc)
+        if 'github_token' in session:
+            doc = {"text": text, "username": username, "typeOfPost": "post", "replies": []}
+            collection.insert_one(doc)
     homePosts = []
-    for x in collection.find():
+    for x in collection.find({"typeOfPost": "post"}):
         homePosts.append(x)
-    refinedHomePosts = []
-    post = ""
-    user = ""
-    postuser = ""
-    for x in homePosts:
-        post = x['text']
-        user = x['username']
-        postuser = post+' '+ user
-        refinedHomePosts.append(postuser)
-    refinedHomePosts.reverse()
-    print(refinedHomePosts)
-    return render_template('home.html', posts=refinedHomePosts)
+    homePosts.reverse()
+    #refinedHomePosts = []
+    #post = ""
+    #user = ""
+    #postuser = ""
+    #for x in homePosts:
+    #    post = x['text']
+    #    user = x['username']
+    #    postuser = post+' -'+ user
+    #    refinedHomePosts.append(postuser)
+    #refinedHomePosts.reverse()
+    #print(refinedHomePosts)
+    
+    #code to put replies into replies to og post
+    parent = {"_id": ObjectId(request.form.get("replyToID"))}
+    child = collection.find_one({"replyTo": ObjectId(request.form.get("replyToID"))})
+    changes = {'$push': {"replies": child}}
+    collection.update_one(parent, changes)
+    return render_template('home.html', posts=homePosts)
     
 
 #redirect to GitHub's OAuth page and confirm callback URL
